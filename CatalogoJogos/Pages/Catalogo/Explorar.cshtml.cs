@@ -9,7 +9,6 @@ namespace CatalogoJogos.Pages.Catalogo
     public class ExplorarModel : PageModel
     {
         private readonly IRepository<Jogo> _jogoRepository;
-        [BindProperty]
         public List<Jogo> JogosDisponiveis { get; set; } = new();
 
         public ExplorarModel(IRepository<Jogo> jogoRepository)
