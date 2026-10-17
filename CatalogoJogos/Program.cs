@@ -1,7 +1,16 @@
+using CatalogoJogos.Interfaces;
+using CatalogoJogos.Mappers;
+using CatalogoJogos.Models;
+using CatalogoJogos.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddSingleton<ICsvMapper<Jogo>, JogoCsvMapper>();
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(CsvRepository<>));
 
 var app = builder.Build();
 

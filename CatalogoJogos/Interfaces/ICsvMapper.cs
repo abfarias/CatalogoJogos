@@ -5,7 +5,7 @@
         string CaminhoArquivo { get; }
         string Cabecalho { get; }
 
-        T MapearParaEntidade(string[] linhas);
+        T MapearParaEntidade(string[] linha);
         string MapearParaLinha(T entidade);
         void AtribuirNovoId(List<T> entidadesExistentes, T novaEntidade);
     }

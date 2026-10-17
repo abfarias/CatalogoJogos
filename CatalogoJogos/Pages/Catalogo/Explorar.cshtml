@@ -1,0 +1,18 @@
+﻿@page
+@model CatalogoJogos.Pages.Catalogo.ExplorarModel
+@{
+    ViewData["Title"] = "Explorar Jogos";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+}
+
+<h1>@ViewData["Title"]</h1>
+@foreach (var jogo in Model.JogosDisponiveis)
+{
+    <div>
+        <h2>@jogo.Titulo</h2>
+        <h3>@jogo.IdJogo</h3>
+        <p>@jogo.Descricao</p>
+        <p>@jogo.Categoria</p>
+        <p>Preço: @jogo.Preco.ToString("C", culture)</p>
+    </div>
+}

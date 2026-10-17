@@ -2,7 +2,7 @@
 {
     public interface IRepository<T> where T : class
     {
-        List<T> ListasTodos();
+        List<T> ListarTodos();
         void Adicionar(T entidade);
     }
 }
