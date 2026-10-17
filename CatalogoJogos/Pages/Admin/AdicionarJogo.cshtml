@@ -1,0 +1,38 @@
+﻿@page
+@model CatalogoJogos.Pages.Admin.AdicionarJogoModel
+@{
+    ViewData["Title"] = "Adicionar Jogo";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post">
+    <div>
+        <label asp-for="NovoJogo.Titulo">Título</label>
+        <input asp-for="NovoJogo.Titulo" class="form-control" required />
+    </div>
+
+    <div>
+        <label asp-for="NovoJogo.Descricao">Descrição</label>
+        <textarea asp-for="NovoJogo.Descricao" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <div>
+        <label asp-for="NovoJogo.Categoria">Categoria</label>
+        <input asp-for="NovoJogo.Categoria" class="form-control" required />
+    </div>
+
+    <div>
+        <label asp-for="NovoJogo.Preco">Preço (R$)</label>
+        <input asp-for="NovoJogo.Preco" type="number" step="0.01" class="form-control" required />
+    </div>
+
+    <div>
+        <label asp-for="NovoJogo.CaminhoFotoCapa">Caminho / URL da Foto de Capa</label>
+        <input asp-for="NovoJogo.CaminhoFotoCapa" class="form-control" />
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Salvar Jogo</button>
+    <a asp-page="/Catalogo/Explorar" class="btn btn-secondary">Cancelar</a>
+</form>
