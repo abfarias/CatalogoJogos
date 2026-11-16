@@ -1,24 +1,22 @@
-using CatalogoJogos.Interfaces;
 using CatalogoJogos.Models;
-using Microsoft.AspNetCore.Mvc;
+using CatalogoJogos.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CatalogoJogos.Pages.Catalogo
 {
     public class ExplorarModel : PageModel
     {
-        private readonly IRepository<Jogo> _jogoRepository;
+        private readonly CatalogoService _catalogoService;
         public List<Jogo> JogosDisponiveis { get; set; } = new();
 
-        public ExplorarModel(IRepository<Jogo> jogoRepository)
+        public ExplorarModel(CatalogoService catalogoService)
         {
-            _jogoRepository = jogoRepository;
+            _catalogoService = catalogoService;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            JogosDisponiveis = _jogoRepository.ListarTodos();
+            JogosDisponiveis = await _catalogoService.BuscarAsync(termo: null, categoria: null);
         }
     }
 }

@@ -6,13 +6,27 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-@foreach (var jogo in Model.JogosDisponiveis)
+
+@if (Model.JogosDisponiveis.Count == 0)
 {
-    <div>
-        <h2>@jogo.Titulo</h2>
-        <h3>@jogo.IdJogo</h3>
-        <p>@jogo.Descricao</p>
-        <p>@jogo.Categoria</p>
-        <p>Preço: @jogo.Preco.ToString("C", culture)</p>
+    <p>Nenhum jogo encontrado.</p>
+}
+else
+{
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var jogo in Model.JogosDisponiveis)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <partial name="_CapaJogo" model="jogo" />
+                    <div class="card-body">
+                        <h2 class="card-title h5">@jogo.Titulo</h2>
+                        <p class="card-text text-muted mb-1">@jogo.Categoria</p>
+                        <p class="card-text">@jogo.Descricao</p>
+                    </div>
+                    <div class="card-footer fw-bold">@jogo.Preco.ToString("C", culture)</div>
+                </div>
+            </div>
+        }
     </div>
 }

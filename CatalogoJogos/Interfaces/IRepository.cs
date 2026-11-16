@@ -2,7 +2,8 @@
 {
     public interface IRepository<T> where T : class
     {
-        List<T> ListarTodos();
-        void Adicionar(T entidade);
+        Task<List<T>> ListarTodosAsync();
+        Task<T?> ObterPorIdAsync(int id);
+        Task AdicionarAsync(T entidade);
     }
 }

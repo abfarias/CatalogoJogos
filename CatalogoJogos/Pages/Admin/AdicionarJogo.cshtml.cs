@@ -1,5 +1,5 @@
-using CatalogoJogos.Interfaces;
 using CatalogoJogos.Models;
+using CatalogoJogos.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -7,22 +7,33 @@ namespace CatalogoJogos.Pages.Admin
 {
     public class AdicionarJogoModel : PageModel
     {
-        private readonly IRepository<Jogo> _jogoRepository;
-        [BindProperty]
-        public Jogo NovoJogo { get; set; } = new();
+        // Enquanto não há login (MC03), os jogos são atribuídos ao administrador padrão criado na carga inicial.
+        private const int IdAdminPadrao = 1;
 
-        public AdicionarJogoModel(IRepository<Jogo> jogoRepository)
+        private readonly AdminCatalogoService _adminCatalogoService;
+
+        [BindProperty]
+        public Jogo Jogo { get; set; } = new();
+
+        public AdicionarJogoModel(AdminCatalogoService adminCatalogoService)
         {
-            _jogoRepository = jogoRepository;
+            _adminCatalogoService = adminCatalogoService;
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
                 return Page();
 
-            _jogoRepository.Adicionar(NovoJogo);
-            return RedirectToPage("/Catalogo/Explorar");
+            var resultado = await _adminCatalogoService.CadastrarAsync(Jogo, IdAdminPadrao);
+            if (!resultado.Sucesso)
+            {
+                ModelState.AddModelError(string.Empty, resultado.Mensagem);
+                return Page();
+            }
+
+            TempData["Mensagem"] = resultado.Mensagem;
+            return RedirectToPage("/Admin/Jogos");
         }
     }
 }

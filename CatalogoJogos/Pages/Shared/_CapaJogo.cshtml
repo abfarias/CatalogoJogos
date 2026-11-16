@@ -1,0 +1,7 @@
+@model CatalogoJogos.Models.Jogo
+@{
+    var semCapa = Url.Content("~/images/capas/sem-capa.svg");
+    var capa = string.IsNullOrWhiteSpace(Model.CaminhoFotoCapa) ? semCapa : Url.Content(Model.CaminhoFotoCapa);
+}
+<img src="@capa" alt="Capa de @Model.Titulo" class="capa-jogo" loading="lazy"
+     onerror="this.onerror=null;this.src='@semCapa';" />

@@ -1,0 +1,62 @@
+@page
+@model CatalogoJogos.Pages.Admin.JogosModel
+@{
+    ViewData["Title"] = "Gerenciar Catálogo";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-page="/Admin/AdicionarJogo" class="btn btn-primary">Adicionar Jogo</a>
+</div>
+
+@if (TempData["Mensagem"] is string mensagem)
+{
+    <div class="alert alert-success">@mensagem</div>
+}
+@if (TempData["Erro"] is string erro)
+{
+    <div class="alert alert-danger">@erro</div>
+}
+
+@if (Model.Jogos.Count == 0)
+{
+    <p>Nenhum jogo cadastrado.</p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Capa</th>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th class="text-end">Preço</th>
+                <th>Situação</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var jogo in Model.Jogos)
+            {
+                <tr class="@(jogo.Ativo ? "" : "text-muted")">
+                    <td class="capa-miniatura"><partial name="_CapaJogo" model="jogo" /></td>
+                    <td>@jogo.Titulo</td>
+                    <td>@jogo.Categoria</td>
+                    <td class="text-end">@jogo.Preco.ToString("C", culture)</td>
+                    <td>
+                        <span class="badge @(jogo.Ativo ? "bg-success" : "bg-secondary")">@(jogo.Ativo ? "Ativo" : "Desativado")</span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <a asp-page="/Admin/EditarJogo" asp-route-id="@jogo.IdJogo" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form method="post" asp-page-handler="AlterarSituacao" asp-route-id="@jogo.IdJogo" class="d-inline">
+                            <button type="submit" class="btn btn-sm @(jogo.Ativo ? "btn-outline-danger" : "btn-outline-success")">
+                                @(jogo.Ativo ? "Desativar" : "Reativar")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
