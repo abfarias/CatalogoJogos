@@ -7,9 +7,6 @@ namespace CatalogoJogos.Pages.Admin
 {
     public class AdicionarJogoModel : PageModel
     {
-        // Enquanto não há login (MC03), os jogos são atribuídos ao administrador padrão criado na carga inicial.
-        private const int IdAdminPadrao = 1;
-
         private readonly AdminCatalogoService _adminCatalogoService;
 
         [BindProperty]
@@ -25,7 +22,12 @@ namespace CatalogoJogos.Pages.Admin
             if (!ModelState.IsValid)
                 return Page();
 
-            var resultado = await _adminCatalogoService.CadastrarAsync(Jogo, IdAdminPadrao);
+            // A pasta /Admin exige o perfil Administrador, então o Id vem do cookie.
+            var idAdmin = User.ObterIdUsuario();
+            if (idAdmin is null)
+                return Challenge();
+
+            var resultado = await _adminCatalogoService.CadastrarAsync(Jogo, idAdmin.Value);
             if (!resultado.Sucesso)
             {
                 ModelState.AddModelError(string.Empty, resultado.Mensagem);

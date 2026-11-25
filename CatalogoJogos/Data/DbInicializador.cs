@@ -1,4 +1,5 @@
 using CatalogoJogos.Models;
+using CatalogoJogos.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -14,13 +15,14 @@ namespace CatalogoJogos.Data
             var contexto = escopo.ServiceProvider.GetRequiredService<CatalogoJogosDbContext>();
             var configuracao = escopo.ServiceProvider.GetRequiredService<IConfiguration>();
             var ambiente = escopo.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+            var hasher = escopo.ServiceProvider.GetRequiredService<IPasswordHasher<Administrador>>();
 
             await contexto.Database.MigrateAsync();
 
             var admin = await contexto.Administradores.OrderBy(a => a.IdAdmin).FirstOrDefaultAsync();
             if (admin is null)
             {
-                admin = CriarAdministradorPadrao(configuracao);
+                admin = CriarAdministradorPadrao(configuracao, hasher);
                 contexto.Administradores.Add(admin);
             }
 
@@ -34,16 +36,16 @@ namespace CatalogoJogos.Data
         }
 
         // As credenciais do administrador padrão vêm do user-secrets (seção AdminPadrao).
-        private static Administrador CriarAdministradorPadrao(IConfiguration configuracao)
+        private static Administrador CriarAdministradorPadrao(IConfiguration configuracao, IPasswordHasher<Administrador> hasher)
         {
             var secao = configuracao.GetSection("AdminPadrao");
             var admin = new Administrador
             {
                 Nome = secao["Nome"] ?? "Administrador",
-                Email = ObterObrigatorio(secao, "Email")
+                Email = AutenticacaoService.NormalizarEmail(ObterObrigatorio(secao, "Email"))
             };
             var senha = ObterObrigatorio(secao, "Senha");
-            admin.SenhaHash = new PasswordHasher<Administrador>().HashPassword(admin, senha);
+            admin.SenhaHash = hasher.HashPassword(admin, senha);
             return admin;
         }
 

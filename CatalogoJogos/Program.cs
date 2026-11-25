@@ -1,7 +1,10 @@
 using CatalogoJogos.Data;
 using CatalogoJogos.Interfaces;
+using CatalogoJogos.Models;
 using CatalogoJogos.Repositories;
 using CatalogoJogos.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -9,7 +12,28 @@ using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    // Páginas restritas por perfil (claim Role do cookie).
+    options.Conventions.AuthorizeFolder("/Admin", Perfis.Administrador);
+    options.Conventions.AuthorizeFolder("/Jogador", Perfis.Jogador);
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Conta/Login";
+        options.AccessDeniedPath = "/Conta/AcessoNegado";
+        options.ExpireTimeSpan = TimeSpan.FromHours(2);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(Perfis.Administrador, policy => policy.RequireRole(Perfis.Administrador))
+    .AddPolicy(Perfis.Jogador, policy => policy.RequireRole(Perfis.Jogador));
+
+builder.Services.AddSingleton<IPasswordHasher<Jogador>, PasswordHasher<Jogador>>();
+builder.Services.AddSingleton<IPasswordHasher<Administrador>, PasswordHasher<Administrador>>();
 
 // Em desenvolvimento, a connection string vem do user-secrets.
 var connectionString = builder.Configuration.GetConnectionString("CatalogoJogos")
@@ -25,6 +49,7 @@ builder.Services.AddScoped<IAdministradorRepository, AdministradorRepository>();
 builder.Services.AddScoped<ICompraRepository, CompraRepository>();
 builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
 
+builder.Services.AddScoped<AutenticacaoService>();
 builder.Services.AddScoped<CatalogoService>();
 builder.Services.AddScoped<AdminCatalogoService>();
 
@@ -54,6 +79,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

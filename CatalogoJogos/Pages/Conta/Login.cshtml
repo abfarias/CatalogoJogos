@@ -1,0 +1,32 @@
+@page
+@model CatalogoJogos.Pages.Conta.LoginModel
+@{
+    ViewData["Title"] = "Entrar";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post" class="col-md-4">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="ReturnUrl" />
+
+    <div class="mb-3">
+        <label asp-for="Dados.Email" class="form-label"></label>
+        <input asp-for="Dados.Email" class="form-control" autocomplete="username" />
+        <span asp-validation-for="Dados.Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Dados.Senha" class="form-label"></label>
+        <input asp-for="Dados.Senha" class="form-control" autocomplete="current-password" />
+        <span asp-validation-for="Dados.Senha" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Entrar</button>
+</form>
+
+<p class="mt-3">Ainda não tem conta? <a asp-page="/Conta/Registrar">Cadastre-se</a></p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
