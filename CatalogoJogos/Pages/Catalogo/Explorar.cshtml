@@ -7,6 +7,8 @@
 
 <h1>@ViewData["Title"]</h1>
 
+<partial name="_Mensagens" />
+
 @if (Model.JogosDisponiveis.Count == 0)
 {
     <p>Nenhum jogo encontrado.</p>
@@ -24,7 +26,23 @@ else
                         <p class="card-text text-muted mb-1">@jogo.Categoria</p>
                         <p class="card-text">@jogo.Descricao</p>
                     </div>
-                    <div class="card-footer fw-bold">@jogo.Preco.ToString("C", culture)</div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">@jogo.Preco.ToString("C", culture)</span>
+                        @if (Model.IdsNaBiblioteca.Contains(jogo.IdJogo))
+                        {
+                            <span class="badge bg-success">Na biblioteca</span>
+                        }
+                        else if (User.EhJogador())
+                        {
+                            <form method="post" asp-page-handler="Comprar" asp-route-idJogo="@jogo.IdJogo">
+                                <button type="submit" class="btn btn-sm btn-primary">Comprar</button>
+                            </form>
+                        }
+                        else if (User.Identity?.IsAuthenticated != true)
+                        {
+                            <a asp-page="/Conta/Login" class="btn btn-sm btn-outline-primary">Entrar para comprar</a>
+                        }
+                    </div>
                 </div>
             </div>
         }

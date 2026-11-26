@@ -40,7 +40,9 @@ namespace CatalogoJogos.Data
                 e.Property(j => j.Email).HasMaxLength(256).IsRequired();
                 e.Property(j => j.SenhaHash).HasMaxLength(256).IsRequired();
                 e.Property(j => j.FotoPerfil).HasMaxLength(500);
-                e.Property(j => j.SaldoCarteira).HasPrecision(10, 2).HasDefaultValue(0m);
+                // Token de concorrência: se o saldo mudou desde a leitura (outra compra ou recarga),
+                // o UPDATE não grava e o EF lança DbUpdateConcurrencyException.
+                e.Property(j => j.SaldoCarteira).HasPrecision(10, 2).HasDefaultValue(0m).IsConcurrencyToken();
                 e.HasIndex(j => j.Email).IsUnique();
                 e.HasIndex(j => j.Apelido).IsUnique();
             });

@@ -1,0 +1,26 @@
+@page
+@model CatalogoJogos.Pages.Jogador.CarteiraModel
+@{
+    ViewData["Title"] = "Minha carteira";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<partial name="_Mensagens" />
+
+<p>Saldo atual: <strong>@Model.Saldo.ToString("C", culture)</strong></p>
+
+<form method="post" class="col-md-4">
+    <div class="mb-3">
+        <label asp-for="Valor" class="form-label"></label>
+        <input asp-for="Valor" type="number" step="0.01" min="1" max="1000" class="form-control" />
+        <span asp-validation-for="Valor" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Adicionar saldo</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

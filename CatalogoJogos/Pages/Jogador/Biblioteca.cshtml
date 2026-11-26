@@ -1,0 +1,45 @@
+@page
+@model CatalogoJogos.Pages.Jogador.BibliotecaModel
+@{
+    ViewData["Title"] = "Minha biblioteca";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<partial name="_Mensagens" />
+
+@if (Model.Compras.Count == 0)
+{
+    <p>Sua biblioteca está vazia. <a asp-page="/Catalogo/Explorar">Explore o catálogo</a>.</p>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Capa</th>
+                <th>Título</th>
+                <th>Comprado em</th>
+                <th class="text-end">Valor pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var compra in Model.Compras)
+            {
+                <tr>
+                    <td class="capa-miniatura"><partial name="_CapaJogo" model="compra.Jogo" /></td>
+                    <td>
+                        @compra.Jogo!.Titulo
+                        @if (!compra.Jogo.Ativo)
+                        {
+                            <span class="badge bg-secondary">Fora do catálogo</span>
+                        }
+                    </td>
+                    <td>@compra.DataAquisicao.ToString("dd/MM/yyyy HH:mm", culture)</td>
+                    <td class="text-end">@compra.ValorDebitado.ToString("C", culture)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

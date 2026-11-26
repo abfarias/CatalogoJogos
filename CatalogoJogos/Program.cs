@@ -52,6 +52,8 @@ builder.Services.AddScoped<IAvaliacaoRepository, AvaliacaoRepository>();
 builder.Services.AddScoped<AutenticacaoService>();
 builder.Services.AddScoped<CatalogoService>();
 builder.Services.AddScoped<AdminCatalogoService>();
+builder.Services.AddScoped<CarteiraService>();
+builder.Services.AddScoped<CompraService>();
 
 var app = builder.Build();
 

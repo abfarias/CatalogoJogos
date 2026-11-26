@@ -26,6 +26,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Catalogo/Explorar">Explorar Jogos</a>
                         </li>
+                        @if (User.EhJogador())
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Jogador/Biblioteca">Minha biblioteca</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Jogador/Carteira">Minha carteira</a>
+                            </li>
+                        }
                         @if (User.EhAdministrador())
                         {
                             <li class="nav-item">
