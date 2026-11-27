@@ -9,9 +9,27 @@
 
 <partial name="_Mensagens" />
 
+<form method="get" class="row g-2 mb-4">
+    <div class="col-md-5">
+        <input asp-for="Termo" class="form-control" placeholder="Buscar por título" />
+    </div>
+    <div class="col-md-4">
+        <select asp-for="Categoria" asp-items="@(new SelectList(Model.Categorias))" class="form-select">
+            <option value="">Todas as categorias</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        @if (Model.FiltroAplicado)
+        {
+            <a asp-page="/Catalogo/Explorar" class="btn btn-link">Limpar</a>
+        }
+    </div>
+</form>
+
 @if (Model.JogosDisponiveis.Count == 0)
 {
-    <p>Nenhum jogo encontrado.</p>
+    <p>@(Model.FiltroAplicado ? "Nenhum jogo encontrado para esta busca." : "Nenhum jogo encontrado.")</p>
 }
 else
 {
@@ -20,9 +38,11 @@ else
         {
             <div class="col">
                 <div class="card h-100">
-                    <partial name="_CapaJogo" model="jogo" />
+                    <a asp-page="/Catalogo/Detalhes" asp-route-id="@jogo.IdJogo"><partial name="_CapaJogo" model="jogo" /></a>
                     <div class="card-body">
-                        <h2 class="card-title h5">@jogo.Titulo</h2>
+                        <h2 class="card-title h5">
+                            <a asp-page="/Catalogo/Detalhes" asp-route-id="@jogo.IdJogo" class="text-reset">@jogo.Titulo</a>
+                        </h2>
                         <p class="card-text text-muted mb-1">@jogo.Categoria</p>
                         <p class="card-text">@jogo.Descricao</p>
                     </div>
@@ -40,7 +60,8 @@ else
                         }
                         else if (User.Identity?.IsAuthenticated != true)
                         {
-                            <a asp-page="/Conta/Login" class="btn btn-sm btn-outline-primary">Entrar para comprar</a>
+                            <a asp-page="/Conta/Login" asp-route-ReturnUrl="@Url.Page("/Catalogo/Detalhes", new { id = jogo.IdJogo })"
+                               class="btn btn-sm btn-outline-primary">Entrar para comprar</a>
                         }
                     </div>
                 </div>

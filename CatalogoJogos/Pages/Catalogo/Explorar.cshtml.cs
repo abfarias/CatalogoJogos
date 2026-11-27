@@ -11,6 +11,16 @@ namespace CatalogoJogos.Pages.Catalogo
         private readonly CompraService _compraService;
 
         public List<Jogo> JogosDisponiveis { get; set; } = new();
+        public List<string> Categorias { get; set; } = new();
+
+        // Filtros vêm da query string (?Termo=...&Categoria=...) para continuarem preenchidos.
+        [BindProperty(SupportsGet = true)]
+        public string? Termo { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string? Categoria { get; set; }
+
+        public bool FiltroAplicado => !string.IsNullOrWhiteSpace(Termo) || !string.IsNullOrWhiteSpace(Categoria);
 
         // Jogos que o jogador logado já possui (vazio para visitantes e administradores).
         public HashSet<int> IdsNaBiblioteca { get; set; } = new();
@@ -23,7 +33,8 @@ namespace CatalogoJogos.Pages.Catalogo
 
         public async Task OnGetAsync()
         {
-            JogosDisponiveis = await _catalogoService.BuscarAsync(termo: null, categoria: null);
+            Categorias = await _catalogoService.ListarCategoriasAsync();
+            JogosDisponiveis = await _catalogoService.BuscarAsync(Termo, Categoria);
 
             var idJogador = User.EhJogador() ? User.ObterIdUsuario() : null;
             if (idJogador is not null)

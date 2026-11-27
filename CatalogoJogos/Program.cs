@@ -54,6 +54,7 @@ builder.Services.AddScoped<CatalogoService>();
 builder.Services.AddScoped<AdminCatalogoService>();
 builder.Services.AddScoped<CarteiraService>();
 builder.Services.AddScoped<CompraService>();
+builder.Services.AddScoped<AvaliacaoService>();
 
 var app = builder.Build();
 

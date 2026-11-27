@@ -30,9 +30,13 @@ else
                 <tr>
                     <td class="capa-miniatura"><partial name="_CapaJogo" model="compra.Jogo" /></td>
                     <td>
-                        @compra.Jogo!.Titulo
-                        @if (!compra.Jogo.Ativo)
+                        @if (compra.Jogo!.Ativo)
                         {
+                            <a asp-page="/Catalogo/Detalhes" asp-route-id="@compra.IdJogo">@compra.Jogo.Titulo</a>
+                        }
+                        else
+                        {
+                            @compra.Jogo.Titulo
                             <span class="badge bg-secondary">Fora do catálogo</span>
                         }
                     </td>

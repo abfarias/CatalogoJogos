@@ -1,0 +1,104 @@
+@page "{id:int}"
+@model CatalogoJogos.Pages.Catalogo.DetalhesModel
+@{
+    var jogo = Model.Detalhes.Jogo;
+    ViewData["Title"] = jogo.Titulo;
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("pt-BR");
+    var totalAvaliacoes = Model.Detalhes.Avaliacoes.Count;
+}
+
+<partial name="_Mensagens" />
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <partial name="_CapaJogo" model="jogo" />
+    </div>
+
+    <div class="col-md-8">
+        <h1>@jogo.Titulo</h1>
+        <p class="text-muted">@jogo.Categoria</p>
+        <p>@jogo.Descricao</p>
+        <p class="fs-4 fw-bold">@jogo.Preco.ToString("C", culture)</p>
+
+        <p>
+            Nota média:
+            @if (Model.Detalhes.NotaMedia is double media)
+            {
+                <strong>@media.ToString("0.0", culture) / 5</strong>
+                <span class="text-muted">(@totalAvaliacoes @(totalAvaliacoes == 1 ? "avaliação" : "avaliações"))</span>
+            }
+            else
+            {
+                <span>Ainda não avaliado</span>
+            }
+        </p>
+
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-page="/Conta/Login" asp-route-ReturnUrl="@Url.Page("/Catalogo/Detalhes", new { id = jogo.IdJogo })"
+               class="btn btn-outline-primary">Entrar para comprar</a>
+        }
+        else if (User.EhJogador() && !Model.Detalhes.Possui)
+        {
+            <form method="post" asp-page-handler="Comprar" asp-route-id="@jogo.IdJogo">
+                <button type="submit" class="btn btn-primary">Comprar</button>
+            </form>
+        }
+        else if (Model.Detalhes.Possui)
+        {
+            <p><span class="badge bg-success">Na sua biblioteca</span></p>
+
+            <h2 class="h5 mt-4">@(Model.MinhaAvaliacao is null ? "Avaliar este jogo" : "Sua avaliação")</h2>
+            <form method="post" asp-page-handler="Avaliar" asp-route-id="@jogo.IdJogo" class="col-md-8">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NovaAvaliacao.Nota" class="form-label"></label>
+                    <select asp-for="NovaAvaliacao.Nota" class="form-select">
+                        <option value="">Escolha...</option>
+                        @for (var n = 5; n >= 1; n--)
+                        {
+                            <option value="@n">@n</option>
+                        }
+                    </select>
+                    <span asp-validation-for="NovaAvaliacao.Nota" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NovaAvaliacao.Comentario" class="form-label"></label>
+                    <textarea asp-for="NovaAvaliacao.Comentario" class="form-control" rows="3" maxlength="500"></textarea>
+                    <span asp-validation-for="NovaAvaliacao.Comentario" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    @(Model.MinhaAvaliacao is null ? "Enviar avaliação" : "Atualizar avaliação")
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+<h2 class="h4 mt-5">Avaliações</h2>
+@if (totalAvaliacoes == 0)
+{
+    <p>Ainda não avaliado.</p>
+}
+else
+{
+    @foreach (var avaliacao in Model.Detalhes.Avaliacoes)
+    {
+        <div class="border-bottom py-2">
+            <strong>@avaliacao.Jogador!.Apelido</strong>
+            <span>— nota @avaliacao.Nota / 5</span>
+            <span class="text-muted small">em @avaliacao.DataAvaliacao.ToString("dd/MM/yyyy", culture)</span>
+            @if (!string.IsNullOrEmpty(avaliacao.Comentario))
+            {
+                <p class="mb-0">@avaliacao.Comentario</p>
+            }
+        </div>
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
